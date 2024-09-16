@@ -1,0 +1,141 @@
+Зайти в настроки раскладки клавиатуры и добавить русский
+Сменить сочетание клавишь "Switch to Next Keyboutd Layout" на Meta+Space
+Добавить поддержку AUR и Flatpak в настройках "Add/Remove Software" "Third Party"\
+
+=======================================================
+
+chmod +x setup.sh &&
+./setup.sh
+
+=======================================================
+
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+
+=======================================================
+./setup_zsh.sh
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+=======================================================
+
+
+" Основные настройки
+set nocompatible          " Режим совместимости с vi отключен
+set encoding=utf-8        " Кодировка по умолчанию UTF-8
+set number                " Показать номера строк
+set relativenumber        " Относительные номера строк
+set showcmd               " Показывать вводимые команды
+set cursorline            " Подсветка текущей строки
+set wildmenu              " Расширенное меню автодополнения
+set tabstop=4             " Ширина табуляции 4 пробела
+set shiftwidth=4          " Количество пробелов для автозамены табуляции
+set softtabstop=4         " Количество пробелов для табуляции в режиме редактирования
+set expandtab             " Использовать пробелы вместо табуляции
+
+" Подсветка синтаксиса
+syntax on                 " Включить подсветку синтаксиса
+set background=dark       " Темный фон для подсветки
+
+" Установка плагинов с помощью vim-plug
+call plug#begin('~/.vim/plugged')
+
+" Плагины
+Plug 'tpope/vim-fugitive'          " Git интеграция
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } } " Fuzzy finder
+Plug 'preservim/nerdtree'          " Дерево файлов
+Plug 'airblade/vim-gitgutter'      " Показывать изменения в git
+Plug 'neovim/nvim-lspconfig'       " Конфигурация для встроенного LSP
+Plug 'nvim-lua/plenary.nvim'       " Зависимость для многих плагинов
+Plug 'hrsh7th/nvim-compe'          " Автодополнение
+Plug 'scrooloose/syntastic'         " Проверка синтаксиса
+Plug 'Valloric/YouCompleteMe'      " Интерактивное автодополнение
+Plug 'majutsushi/tagbar'            " Панель структуры кода
+Plug 'airblade/vim-rooter'         " Автоматическое переключение рабочей директории
+Plug 'Xuyuanp/nerdtree-git-plugin'  " Интеграция NERDTree с Git
+Plug 'vim-airline/vim-airline'     " Статусная строка
+
+call plug#end()
+
+" Конфигурация плагинов
+" NERDTree
+nmap <C-n> :NERDTreeToggle<CR>
+" Открытие NERDTree в текущем окне
+nmap <C-t> :NERDTreeFind<CR>
+
+" Tagbar для структуры кода
+nmap <C-t> :TagbarToggle<CR>
+
+" Установка корневого каталога проекта
+let g:rooter_pattern = ['.git', '.hg', '.svn', 'package.json', 'makefile', 'CMakeLists.txt']
+
+" Настройки для vim-airline
+let g:airline#extensions#tabline#enabled = 1
+let g:airline_powerline_fonts = 1
+
+" Настройки для синтаксической проверки
+let g:syntastic_python_checkers = ['flake8']
+let g:syntastic_cpp_checkers = ['clang']
+
+" LSP и автодополнение
+lua << EOF
+local nvim_lsp = require('lspconfig')
+
+nvim_lsp.pyright.setup{}          " LSP для Python
+nvim_lsp.clangd.setup{}          " LSP для C++
+
+require('compe').setup {
+  enabled = true,
+  autocomplete = true,
+  debug = false,
+  min_length = 1,
+  preselect = 'enable',
+  throttle_time = 80,
+  source = {
+    path = true,
+    buffer = true,
+    calc = true,
+    vsnip = true,
+    nvim_lsp = true,
+  },
+}
+EOF
+
+" Настройки поиска
+set ignorecase            " Игнорировать регистр при поиске
+set smartcase             " Учитывать регистр, если он был использован в поиске
+set incsearch             " Инкрементальный поиск
+
+" Настройки автозавершения
+set completeopt=menu,menuone,noselect " Настройки автозавершения
+
+" Настройки буферов и окон
+set splitright            " Открывать вертикальные окна справа
+set splitbelow            " Открывать горизонтальные окна снизу
+
+" Ключевые сочетания
+nmap <Leader>w :w<CR>     " Сохранить файл
+nmap <Leader>q :q<CR>     " Закрыть файл
+nmap <Leader>e :e<Space> " Открыть новый файл
+nmap <Leader>b :ls<CR>:b<Space> " Переключение между буферами
+
+
+
+:PlugInstall
+
