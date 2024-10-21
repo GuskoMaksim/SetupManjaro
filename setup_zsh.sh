@@ -3,9 +3,9 @@ sudo pacman -S --noconfirm \
     fzf \
     tmux \
     tree \
-&&
-sudo bash -c "$(curl -LSs https://github.com/dfmgr/installer/raw/main/install.sh)" &&
-sudo fontmgr install MesloLGSNF &&
+
+sudo bash -c "$(curl -LSs https://github.com/dfmgr/installer/raw/main/install.sh)"
+sudo fontmgr install MesloLGSNF
 
 # Клонирование тем и плагинов
 # Проверка и клонирование powerlevel10k
@@ -14,7 +14,7 @@ if [ ! -d "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k" ]; then
     git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
 else
     echo "powerlevel10k уже установлен."
-fi &&
+fi
 
 # Проверка и клонирование zsh-autosuggestions
 if [ ! -d "${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions" ]; then
@@ -22,7 +22,7 @@ if [ ! -d "${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions" ]; th
     git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
 else
     echo "zsh-autosuggestions уже установлен."
-fi &&
+fi
 
 # Проверка и клонирование zsh-syntax-highlighting
 if [ ! -d "${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting" ]; then
@@ -30,7 +30,7 @@ if [ ! -d "${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting" ]
     git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
 else
     echo "zsh-syntax-highlighting уже установлен."
-fi &&
+fi
 
 # Проверка и клонирование fzf-tab
 if [ ! -d "${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/fzf-tab" ]; then
@@ -38,7 +38,7 @@ if [ ! -d "${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/fzf-tab" ]; then
     git clone https://github.com/Aloxaf/fzf-tab ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/fzf-tab
 else
     echo "fzf-tab уже установлен."
-fi &&
+fi
 
 # Проверка и клонирование you-should-use
 if [ ! -d "${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/you-should-use" ]; then
@@ -46,7 +46,7 @@ if [ ! -d "${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/you-should-use" ]; then
     git clone https://github.com/MichaelAquilina/zsh-you-should-use.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/you-should-use
 else
     echo "you-should-use уже установлен."
-fi &&
+fi
 
 
 # Создание скрипта для изменения темы ZSH
@@ -60,7 +60,7 @@ if [ -f "$ZSHRC_FILE" ]; then
     echo "Тема ZSH успешно изменена на powerlevel10k!"
 else
     echo "Файл .zshrc не найден!"
-fi' > change_zsh_theme.sh &&
+fi' > change_zsh_theme.sh
 
 # Создание скрипта для обновления плагинов ZSH
 echo '#!/bin/bash
@@ -81,17 +81,17 @@ if [ -f "$ZSHRC_FILE" ]; then
     echo "Плагины ZSH успешно изменены!"
 else
     echo "Файл .zshrc не найден!"
-fi' > update_zsh_plugins.sh &&
+fi' > update_zsh_plugins.sh
 
 # Делаем скрипты исполняемыми
-chmod +x change_zsh_theme.sh &&
-chmod +x update_zsh_plugins.sh &&
+chmod +x change_zsh_theme.sh
+chmod +x update_zsh_plugins.sh
 
 # Выполняем скрипты
-./update_zsh_plugins.sh &&
-./change_zsh_theme.sh &&
-rm update_zsh_plugins.sh &&
-rm change_zsh_theme.sh &&
+./update_zsh_plugins.sh
+./change_zsh_theme.sh
+rm update_zsh_plugins.sh
+rm change_zsh_theme.sh
 
 
 echo "alias chromium='nohup chromium &'
@@ -113,9 +113,9 @@ alias bittorrent='nohup org.qbittorrent.qBittorrent &'" >> ~/.zshrc
 
 curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
   https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim \
-&&
-./add_yakuake_autostart.sh &&
-./setup_vim.sh &&
+
+./add_yakuake_autostart.sh
+./setup_vim.sh
 
 # Перезагрузка системы
 sudo systemctl reboot
