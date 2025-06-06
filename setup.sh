@@ -1,6 +1,11 @@
 #!/bin/bash
 
-# --- Настройка Git user.name ---
+# --- Спрашиваем пользователя, что устанавливать ---
+
+read -p "Reboot system? (y/n) " reboot_sys
+
+# --- Настройка Git ---
+echo "--- Настройка Git ---"
 if [ "$(git config --global --get user.name)" != "Gusko Maksim" ]; then
     echo "Настраиваем имя пользователя Git..."
     git config --global user.name "Gusko Maksim"
@@ -8,7 +13,6 @@ else
     echo "Имя пользователя Git уже настроено."
 fi
 
-# --- Настройка Git user.email ---
 if [ "$(git config --global --get user.email)" != "gusko.maksim.n@gmail.com" ]; then
     echo "Настраиваем email Git..."
     git config --global user.email "gusko.maksim.n@gmail.com"
@@ -16,18 +20,19 @@ else
     echo "Email пользователя Git уже настроен."
 fi
 
-# --- Проверка и создание SSH-ключей ---
+# --- SSH-ключи ---
+echo "--- Проверка SSH-ключей ---"
 if [ ! -f ~/.ssh/id_rsa ]; then
-    echo "SSH-ключи не найдены, создаем новые..."
+    echo "Создаем SSH-ключ..."
     ssh-keygen -o -t rsa -b 4096 -C "gusko.maksim.n@gmail.com" -N "" -f ~/.ssh/id_rsa
 else
-    echo "SSH-ключи уже существуют."
+    echo "SSH-ключ уже существует."
 fi
 
-# --- Проверка и создание GPG-ключей ---
+# --- GPG-ключ ---
+echo "--- Проверка GPG-ключа ---"
 if ! gpg --list-keys "gusko.maksim.n@gmail.com" &> /dev/null; then
-    echo "GPG-ключ не найден, создаем новый..."
-
+    echo "Создаем GPG-ключ..."
     cat <<EOF > gpg-key.conf
 %no-protection
 Key-Type: 1
@@ -38,39 +43,23 @@ Name-Real: Maksim Gusko
 Name-Email: gusko.maksim.n@gmail.com
 Expire-Date: 0
 EOF
-
     gpg --batch --generate-key gpg-key.conf
     rm -f gpg-key.conf
-
-    echo "GPG-ключ успешно создан."
+    echo "GPG-ключ создан."
 else
     echo "GPG-ключ уже существует."
 fi
 
-# --- Обновление зеркал и ключей ---
+# --- Обновление системы ---
+echo "--- Обновление системы ---"
 sudo pacman-mirrors -g
 sudo pacman-key --refresh-keys
 sudo pacman -Sy --noconfirm archlinux-keyring
 sudo pacman -Syyuu --noconfirm
 
-# --- Установка пакетов через pacman ---
+# --- Установка базовых пакетов ---
+echo "--- Установка базовых пакетов ---"
 sudo pacman -S --noconfirm \
-    yay \
-    flatpak \
-    yakuake \
-    gvim \
-    neovim \
-    cmake \
-    extra-cmake-modules \
-    libarchive \
-    qt5-base \
-    qt5-declarative \
-    qt5-tools \
-    qt5-svg \
-    qt6-base \
-    qt6-declarative \
-    qt6-tools \
-    qt6-svg \
     plasma \
     kio-extras \
     kde-applications-meta \
@@ -78,38 +67,38 @@ sudo pacman -S --noconfirm \
     sddm-breath-theme \
     manjaro-settings-manager \
     base-devel \
-    chromium \
-    keepassxc \
-    doublecmd \
-    telegram-desktop \
-    steam
+    libarchive \
+    pacman-contrib \
+    vim \
+    fzf \
+    tmux \
+    tree \
+    yay \
+    flatpak \
+    yakuake \
+    neovim \
+    chromium
 
-# --- Включение службы sddm ---
+# --- Включение дисплей-менеджера ---
 sudo systemctl enable sddm.service --force
 
-# --- Добавление Flathub репозитория ---
+# --- Flathub ---
+echo "--- Настройка Flathub ---"
 flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+flatpak install -y flathub com.google.Chrome
 
-# --- Установка flatpak-пакетов ---
-flatpak install -y flathub \
-    com.google.Chrome \
-    com.opera.Opera \
-    com.visualstudio.code \
-    com.jetbrains.PyCharm-Community \
-    md.obsidian.Obsidian \
-    com.protonvpn.www \
-    org.zealdocs.Zeal \
-    cc.arduino.IDE2 \
-    com.sublimetext.three \
-    com.unity.UnityHub \
-    org.qbittorrent.qBittorrent
+chmod +x install_program.sh
+./install_program.sh
 
-# --- Установка прав на локальные скрипты ---
-chmod +x setup_zsh.sh
-chmod +x setup_vim.sh
-chmod +x add_yakuake_autostart.sh
+sudo pacman -Rns --noconfirm kde-applications-meta kde-education-meta kde-games-meta
+sudo pacman -Rns $(pacman -Qdtq)
+sudo paccache -rk1
 
-# --- Перезагрузка системы ---
-echo "Перезагрузка системы через 10 секунд... Нажмите Ctrl+C для отмены."
-sleep 10
-sudo systemctl reboot
+echo "Установка завершена"
+
+# --- Перезагрузка ---
+if [[ "$reboot_sys" =~ ^[yY]$ ]]; then
+    echo "Перезагрузка через 10 секунд... Нажмите Ctrl+C для отмены."
+    sleep 10
+    sudo systemctl reboot
+fi

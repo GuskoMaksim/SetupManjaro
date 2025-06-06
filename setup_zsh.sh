@@ -1,8 +1,4 @@
 #!/bin/bash
-sudo pacman -S --noconfirm \
-    fzf \
-    tmux \
-    tree \
 
 sudo bash -c "$(curl -LSs https://github.com/dfmgr/installer/raw/main/install.sh)"
 sudo fontmgr install MesloLGSNF
@@ -93,24 +89,6 @@ chmod +x update_zsh_plugins.sh
 rm update_zsh_plugins.sh
 rm change_zsh_theme.sh
 
-
-echo "alias chromium='nohup chromium &'
-alias keepass='nohup keepassxc &'
-alias doublecmd='nohup doublecmd &'
-alias telegram='nohup telegram-desktop &'
-alias steam='nohup steam &'
-alias opera='nohup com.opera.Opera &'
-alias chrome='nohup com.google.Chrome &'
-alias vs='nohup com.visualstudio.code &'
-alias pycharm='nohup com.jetbrains.PyCharm-Community &'
-alias obsidian='nohup md.obsidian.Obsidian &'
-alias proton='nohup com.protonvpn.www &'
-alias zeal='nohup org.zealdocs.Zeal &'
-alias arduino='nohup cc.arduino.IDE2 &'
-alias sublime='nohup com.sublimetext.three &'
-alias unity='nohup com.unity.UnityHub &'
-alias bittorrent='nohup org.qbittorrent.qBittorrent &'" >> ~/.zshrc
-
 curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
   https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim \
 
@@ -119,4 +97,3 @@ curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
 
 # Перезагрузка системы
 sudo systemctl reboot
-
