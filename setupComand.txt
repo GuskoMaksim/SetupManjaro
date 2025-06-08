@@ -1,7 +1,3 @@
-Зайти в настроки раскладки клавиатуры и добавить русский
-Сменить сочетание клавишь "Switch to Next Keyboutd Layout" на Meta+Space
-Добавить поддержку AUR и Flatpak в настройках "Add/Remove Software" "Third Party"\
-
 =======================================================
 
 chmod +x setup.sh &&

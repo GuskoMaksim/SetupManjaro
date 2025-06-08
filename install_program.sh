@@ -7,6 +7,7 @@ read -p "Install PyCharm Community? (y/n) " install_pycharm
 read -p "Install UnityHub? (y/n) " install_unityhub
 read -p "Install Qt? (y/n) " install_qt
 read -p "Install CMake? (y/n) " install_cmake
+read -p "Install Docker and Docker Compose? (y/n) " install_docker
 
 
 # --- Установка по выбору ---
@@ -19,8 +20,6 @@ fi
 if [[ "$install_qt" =~ ^[yY]$ ]]; then
     echo "--- Установка Qt ---"
     sudo pacman -S --noconfirm \
-        cmake \
-        extra-cmake-modules \
         qt5-base \
         qt5-declarative \
         qt5-tools \
@@ -45,12 +44,12 @@ if [[ "$install_add_pr" =~ ^[yY]$ ]]; then
 
     cat <<EOF >> ~/.zshrc
 alias doublecmd='nohup doublecmd &'
-alias opera='nohup com.opera.Opera &'
-alias obsidian='nohup md.obsidian.Obsidian &'
-alias proton='nohup com.protonvpn.www &'
-alias zeal='nohup org.zealdocs.Zeal &'
-alias sublime='nohup com.sublimetext.three &'
-alias bittorrent='nohup org.qbittorrent.qBittorrent &'
+alias opera='nohup flatpak run com.opera.Opera &'
+alias obsidian='nohup flatpak run md.obsidian.Obsidian &'
+alias proton='nohup flatpak run com.protonvpn.www &'
+alias zeal='nohup flatpak run org.zealdocs.Zeal &'
+alias sublime='nohup flatpak run com.sublimetext.three &'
+alias bittorrent='nohup flatpak run org.qbittorrent.qBittorrent &'
 EOF
 
 fi
@@ -64,19 +63,19 @@ fi
 if [[ "$install_pycharm" =~ ^[yY]$ ]]; then
     echo "--- Установка PyCharm Community ---"
     flatpak install -y flathub com.jetbrains.PyCharm-Community
-    echo "alias pycharm='nohup com.jetbrains.PyCharm-Community &'" >> ~/.zshrc
+    echo "alias pycharm='nohup flatpak run com.jetbrains.PyCharm-Community &'" >> ~/.zshrc
 fi
 
 if [[ "$install_unityhub" =~ ^[yY]$ ]]; then
     echo "--- Установка UnityHub ---"
     flatpak install -y flathub com.unity.UnityHub
-    echo "alias unity='nohup com.unity.UnityHub &'" >> ~/.zshrc
+    echo "alias unity='nohup flatpak run com.unity.UnityHub &'" >> ~/.zshrc
 fi
 
 if [[ "$install_arduino_IDE" =~ ^[yY]$ ]]; then
     echo "--- Установка Arduino IDE ---"
     flatpak install -y flathub cc.arduino.IDE2
-    echo "alias arduino='nohup cc.arduino.IDE2 &'" >> ~/.zshrc
+    echo "alias arduino='nohup flatpak run cc.arduino.IDE2 &'" >> ~/.zshrc
 fi
 
 
@@ -88,6 +87,14 @@ fi
 
 if [[ "$install_visualstudio" =~ ^[yY]$ ]]; then
     echo "--- Установка Visual Studio ---"
-    flatpak install -y flathub com.visualstudio.code
-    echo "alias vs='nohup com.visualstudio.code &'" >> ~/.zshrc
+    yay -S visual-studio-code-bin --noconfirm
+    echo "alias vs='code &'" >> ~/.zshrc
+fi
+
+if [[ "$install_docker" =~ ^[yY]$ ]]; then
+    echo "--- Installing Docker and Docker Compose ---"
+    sudo pacman -S --noconfirm docker
+    sudo pacman -S --noconfirm docker-compose
+    sudo systemctl enable --now docker
+    sudo usermod -aG docker $USER
 fi

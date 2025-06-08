@@ -1,7 +1,5 @@
 #!/bin/bash
 
-# --- Спрашиваем пользователя, что устанавливать ---
-
 read -p "Reboot system? (y/n) " reboot_sys
 
 # --- Настройка Git ---
@@ -66,9 +64,9 @@ sudo pacman -S --noconfirm \
     manjaro-kde-settings \
     sddm-breath-theme \
     manjaro-settings-manager \
+    pacman-contrib \
     base-devel \
     libarchive \
-    pacman-contrib \
     vim \
     fzf \
     tmux \
@@ -82,11 +80,34 @@ sudo pacman -S --noconfirm \
 # --- Включение дисплей-менеджера ---
 sudo systemctl enable sddm.service --force
 
+echo "--- Активация alias ---"
+setopt aliases
+
+echo "🔧 Adding alias 'updateSystem' to ~/.zshrc..."
+if ! grep -q "alias updateSystem=" ~/.zshrc; then
+    echo "alias updateSystem='bash ~/SetupManjaro/update-all.sh'" >> ~/.zshrc
+    echo "✅ Alias 'updateSystem' added."
+else
+    echo "ℹ️ Alias 'updateSystem' already exists."
+fi
+
+
 # --- Flathub ---
 echo "--- Настройка Flathub ---"
 flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 flatpak install -y flathub com.google.Chrome
 
+# --- pacman ---
+echo "--- Настройка pacman ---"
+chmod +x update-pacman.sh
+./update-pacman.sh
+
+# --- pamac и aur ---
+echo "--- Настройка pamac и aur ---"
+chmod +x enable-aur.sh
+./enable-aur.sh
+
+echo "--- Установка программ ---"
 chmod +x install_program.sh
 ./install_program.sh
 
