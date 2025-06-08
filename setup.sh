@@ -47,6 +47,21 @@ EOF
 else
     echo "GPG-ключ уже существует."
 fi
+# --- Установка базовых пакетов ---
+echo "--- Установка yay и flatpak ---"
+sudo pacman -S --noconfirm \
+    yay \
+    flatpak 
+    
+# --- pacman ---
+echo "--- Настройка pacman ---"
+chmod +x update-pacman.sh
+./update-pacman.sh
+
+# --- pamac и aur ---
+echo "--- Настройка pamac и aur ---"
+chmod +x enable-aur.sh
+./enable-aur.sh
 
 # --- Обновление системы ---
 echo "--- Обновление системы ---"
@@ -71,8 +86,6 @@ sudo pacman -S --noconfirm \
     fzf \
     tmux \
     tree \
-    yay \
-    flatpak \
     yakuake \
     neovim \
     chromium
@@ -81,7 +94,15 @@ sudo pacman -S --noconfirm \
 sudo systemctl enable sddm.service --force
 
 echo "--- Активация alias ---"
-setopt aliases
+ZSHRC="$HOME/.zshrc"
+
+# Добавляем setopt aliases, если его нет
+if ! grep -q 'setopt aliases' "$ZSHRC"; then
+    echo "Добавляем 'setopt aliases' в ~/.zshrc"
+    echo -e "\n# Включение поддержки alias\nsetopt aliases" >> "$ZSHRC"
+else
+    echo "✅ setopt aliases уже настроен."
+fi
 
 echo "🔧 Adding alias 'updateSystem' to ~/.zshrc..."
 if ! grep -q "alias updateSystem=" ~/.zshrc; then
@@ -91,21 +112,10 @@ else
     echo "ℹ️ Alias 'updateSystem' already exists."
 fi
 
-
 # --- Flathub ---
 echo "--- Настройка Flathub ---"
 flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 flatpak install -y flathub com.google.Chrome
-
-# --- pacman ---
-echo "--- Настройка pacman ---"
-chmod +x update-pacman.sh
-./update-pacman.sh
-
-# --- pamac и aur ---
-echo "--- Настройка pamac и aur ---"
-chmod +x enable-aur.sh
-./enable-aur.sh
 
 echo "--- Установка программ ---"
 chmod +x install_program.sh
@@ -114,6 +124,10 @@ chmod +x install_program.sh
 sudo pacman -Rns --noconfirm kde-applications-meta kde-education-meta kde-games-meta
 sudo pacman -Rns $(pacman -Qdtq)
 sudo paccache -rk1
+
+echo "--- Создание пользователя GuskoWork ---"
+chmod +x add_guskowork.sh
+./add_guskowork.sh
 
 echo "Установка завершена"
 
