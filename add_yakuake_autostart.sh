@@ -3,18 +3,18 @@
 PROGRAM_NAME="Yakuake"
 EXEC_COMMAND="yakuake"
 
-# Путь к директории автозагрузки
+# Path to autostart directory
 AUTOSTART_DIR="$HOME/.config/autostart"
 
-# Проверяем, существует ли директория
+# Check if the directory exists
 if [ ! -d "$AUTOSTART_DIR" ]; then
     mkdir -p "$AUTOSTART_DIR"
 fi
 
-# Путь к файлу автозапуска
+# Path to the autostart file
 DESKTOP_FILE="$AUTOSTART_DIR/$PROGRAM_NAME.desktop"
 
-# Создаем .desktop файл с настройками
+# Create .desktop file with settings
 cat <<EOL > "$DESKTOP_FILE"
 [Desktop Entry]
 Type=Application
@@ -23,11 +23,11 @@ Hidden=false
 NoDisplay=false
 X-GNOME-Autostart-enabled=true
 Name=$PROGRAM_NAME
-Comment=Запуск Yakuake при старте системы
+Comment=Launch Yakuake on system startup
 EOL
 
-# Делаем файл исполняемым
+# Make the file executable
 chmod +x "$DESKTOP_FILE"
 
-echo "Yakuake добавлен в автозапуск."
+echo "Yakuake has been added to autostart."
 

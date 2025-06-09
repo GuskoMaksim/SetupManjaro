@@ -1,36 +1,49 @@
 #!/bin/bash
 
-read -p "Reboot system? (y/n) " reboot_sys
+ask_yes_no() {
+    local prompt="$1"
+    local var
+    while true; do
+        read -p "$prompt (y/n) " var
+        if [[ "$var" =~ ^[yYnN]$ ]]; then
+            echo "$var"
+            return
+        fi
+    done
+}
 
-# --- Настройка Git ---
-echo "--- Настройка Git ---"
+reboot_sys=$(ask_yes_no "Reboot system?")
+create_user=$(ask_yes_no "Create a new user?")
+
+# --- Git setup ---
+echo "--- Git setup ---"
 if [ "$(git config --global --get user.name)" != "Gusko Maksim" ]; then
-    echo "Настраиваем имя пользователя Git..."
+    echo "Setting Git user name..."
     git config --global user.name "Gusko Maksim"
 else
-    echo "Имя пользователя Git уже настроено."
+    echo "Git user name is already set."
 fi
 
 if [ "$(git config --global --get user.email)" != "gusko.maksim.n@gmail.com" ]; then
-    echo "Настраиваем email Git..."
+    echo "Setting Git email..."
     git config --global user.email "gusko.maksim.n@gmail.com"
 else
-    echo "Email пользователя Git уже настроен."
+    echo "Git user email is already set."
 fi
 
-# --- SSH-ключи ---
-echo "--- Проверка SSH-ключей ---"
+# --- SSH keys ---
+echo "--- Checking SSH keys ---"
 if [ ! -f ~/.ssh/id_rsa ]; then
-    echo "Создаем SSH-ключ..."
+    echo "Creating SSH key..."
     ssh-keygen -o -t rsa -b 4096 -C "gusko.maksim.n@gmail.com" -N "" -f ~/.ssh/id_rsa
 else
-    echo "SSH-ключ уже существует."
+    echo "SSH key already exists."
 fi
 
-# --- GPG-ключ ---
-echo "--- Проверка GPG-ключа ---"
+# --- GPG key ---
+echo "--- Checking GPG key ---"
 if ! gpg --list-keys "gusko.maksim.n@gmail.com" &> /dev/null; then
-    echo "Создаем GPG-ключ..."
+    echo "Creating GPG key..."
     cat <<EOF > gpg-key.conf
 %no-protection
 Key-Type: 1
@@ -43,35 +56,36 @@ Expire-Date: 0
 EOF
     gpg --batch --generate-key gpg-key.conf
     rm -f gpg-key.conf
-    echo "GPG-ключ создан."
+    echo "GPG key created."
 else
-    echo "GPG-ключ уже существует."
+    echo "GPG key already exists."
 fi
-# --- Установка базовых пакетов ---
-echo "--- Установка yay и flatpak ---"
+
+# --- Install yay and flatpak ---
+echo "--- Installing yay and flatpak ---"
 sudo pacman -S --noconfirm \
     yay \
     flatpak 
-    
+
 # --- pacman ---
-echo "--- Настройка pacman ---"
+echo "--- Configuring pacman ---"
 chmod +x update-pacman.sh
 ./update-pacman.sh
 
-# --- pamac и aur ---
-echo "--- Настройка pamac и aur ---"
+# --- pamac and aur ---
+echo "--- Configuring pamac and aur ---"
 chmod +x enable-aur.sh
 ./enable-aur.sh
 
-# --- Обновление системы ---
-echo "--- Обновление системы ---"
+# --- System update ---
+echo "--- System update ---"
 sudo pacman-mirrors -g
 sudo pacman-key --refresh-keys
 sudo pacman -Sy --noconfirm archlinux-keyring
 sudo pacman -Syyuu --noconfirm
 
-# --- Установка базовых пакетов ---
-echo "--- Установка базовых пакетов ---"
+# --- Install base packages ---
+echo "--- Installing base packages ---"
 sudo pacman -S --noconfirm \
     plasma \
     kio-extras \
@@ -90,18 +104,18 @@ sudo pacman -S --noconfirm \
     neovim \
     chromium
 
-# --- Включение дисплей-менеджера ---
+# --- Enable display manager ---
 sudo systemctl enable sddm.service --force
 
-echo "--- Активация alias ---"
+echo "--- Activating alias ---"
 ZSHRC="$HOME/.zshrc"
 
-# Добавляем setopt aliases, если его нет
+# Add setopt aliases if not present
 if ! grep -q 'setopt aliases' "$ZSHRC"; then
-    echo "Добавляем 'setopt aliases' в ~/.zshrc"
-    echo -e "\n# Включение поддержки alias\nsetopt aliases" >> "$ZSHRC"
+    echo "Adding 'setopt aliases' to ~/.zshrc"
+    echo -e "\n# Enable alias support\nsetopt aliases" >> "$ZSHRC"
 else
-    echo "✅ setopt aliases уже настроен."
+    echo "✅ setopt aliases is already set."
 fi
 
 echo "🔧 Adding alias 'updateSystem' to ~/.zshrc..."
@@ -113,11 +127,11 @@ else
 fi
 
 # --- Flathub ---
-echo "--- Настройка Flathub ---"
+echo "--- Configuring Flathub ---"
 flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 flatpak install -y flathub com.google.Chrome
 
-echo "--- Установка программ ---"
+echo "--- Installing programs ---"
 chmod +x install_program.sh
 ./install_program.sh
 
@@ -125,15 +139,19 @@ sudo pacman -Rns --noconfirm kde-applications-meta kde-education-meta kde-games-
 sudo pacman -Rns $(pacman -Qdtq)
 sudo paccache -rk1
 
-echo "--- Создание пользователя GuskoWork ---"
-chmod +x add_guskowork.sh
-./add_guskowork.sh
+# --- Create user GuskoWork ---
+if [[ "$create_user" =~ ^[yY]$ ]]; then
+    chmod +x add_user.sh
+    ./add_user.sh
+else
+    echo "Skipping user creation."
+fi
 
-echo "Установка завершена"
+echo "The installation is complete."
 
-# --- Перезагрузка ---
+# --- Reboot ---
 if [[ "$reboot_sys" =~ ^[yY]$ ]]; then
-    echo "Перезагрузка через 10 секунд... Нажмите Ctrl+C для отмены."
+    echo "Rebooting in 10 seconds... Press Ctrl+C to cancel."
     sleep 10
     sudo systemctl reboot
 fi

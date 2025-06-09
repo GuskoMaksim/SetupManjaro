@@ -4,28 +4,28 @@ set -e
 
 CONF_FILE="/etc/pacman.conf"
 
-echo "🔧 Настраиваем pacman..."
+echo "🔧 Configuring pacman..."
 
-# Включаем Color
+# Enable Color
 if ! grep -q '^Color' "$CONF_FILE"; then
-    echo "✅ Включаем Color"
+    echo "✅ Enabling Color"
     sudo sed -i '/#Color/s/^#//' "$CONF_FILE"
-    grep -q '^Color' "$CONF_FILE" || echo "Color" | sudo tee -a "$CONF_FILE"
+    grep -q '^Color' "$CONF_FILE" || sudo sed -i '/^\[options\]/a Color' "$CONF_FILE"
 fi
 
-# Включаем ILoveCandy (после Color)
+# Enable ILoveCandy (after Color)
 if ! grep -q '^ILoveCandy' "$CONF_FILE"; then
-    echo "✅ Добавляем ILoveCandy"
+    echo "✅ Adding ILoveCandy"
     sudo sed -i '/^Color/a ILoveCandy' "$CONF_FILE"
 fi
 
-# Устанавливаем ParallelDownloads = 8
+# Set or add ParallelDownloads = 8
 if grep -q '^#*ParallelDownloads' "$CONF_FILE"; then
-    echo "✅ Устанавливаем ParallelDownloads = 8"
+    echo "✅ Setting ParallelDownloads = 8"
     sudo sed -i 's/^#*ParallelDownloads.*/ParallelDownloads = 8/' "$CONF_FILE"
 else
-    echo "✅ Добавляем ParallelDownloads = 8"
-    echo "ParallelDownloads = 8" | sudo tee -a "$CONF_FILE"
+    echo "✅ Adding ParallelDownloads = 8 to [options] section"
+    sudo sed -i '/^\[options\]/a ParallelDownloads = 8' "$CONF_FILE"
 fi
 
-echo "🎉 pacman.conf успешно улучшен!"
+echo "🎉 pacman.conf successfully improved!"
