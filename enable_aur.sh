@@ -9,7 +9,6 @@ if ! command -v pamac &>/dev/null; then
 fi
 
 PAMAC_CONF="/etc/pamac.conf"
-PACMAN_CONF="/etc/pacman.conf"
 
 echo "🔧 Enabling AUR support in pamac..."
 
@@ -25,14 +24,6 @@ grep -q '^CheckAURUpdates' "$PAMAC_CONF" || echo "CheckAURUpdates = true" | sudo
 grep -q '^CheckAURVCSUpdates' "$PAMAC_CONF" || echo "CheckAURVCSUpdates = true" | sudo tee -a "$PAMAC_CONF"
 
 echo "✅ AUR in pamac is enabled"
-
-echo "🔧 Setting MaxParallelDownloads = 8 in pacman.conf..."
-if grep -q '^#*MaxParallelDownloads' "$PACMAN_CONF"; then
-    sudo sed -i 's/^#*MaxParallelDownloads.*/MaxParallelDownloads = 8/' "$PACMAN_CONF"
-else
-    echo "MaxParallelDownloads = 8" | sudo tee -a "$PACMAN_CONF"
-fi
-echo "✅ MaxParallelDownloads is set"
 
 echo "🔧 Installing yay (if not installed)..."
 if ! command -v yay &>/dev/null; then

@@ -95,5 +95,24 @@ curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
 ./add_yakuake_autostart.sh
 ./setup_vim.sh
 
+echo "--- Activating alias ---"
+ZSHRC="$HOME/.zshrc"
+
+# Add setopt aliases if not present
+if ! grep -q 'setopt aliases' "$ZSHRC"; then
+    echo "Adding 'setopt aliases' to ~/.zshrc"
+    echo -e "\n# Enable alias support\nsetopt aliases" >> "$ZSHRC"
+else
+    echo "✅ setopt aliases is already set."
+fi
+
+echo "🔧 Adding alias 'updateSystem' to ~/.zshrc..."
+if ! grep -q "alias updateSystem=" ~/.zshrc; then
+    echo "alias updateSystem='bash ~/SetupManjaro/update_all.sh'" >> ~/.zshrc
+    echo "✅ Alias 'updateSystem' added."
+else
+    echo "ℹ️ Alias 'updateSystem' already exists."
+fi
+
 # Перезагрузка системы
 sudo systemctl reboot

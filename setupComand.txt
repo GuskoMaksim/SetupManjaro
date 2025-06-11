@@ -1,11 +1,15 @@
 =======================================================
 
-chmod +x setup.sh &&
-./setup.sh
+chmod +x setup_sys.sh &&
+./setup_sys.sh
 
 =======================================================
 
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 
 =======================================================
+
+chmod +x setup_user.sh &&
+chmod +x setup_zsh.sh &&
+./setup_user.sh
 ./setup_zsh.sh

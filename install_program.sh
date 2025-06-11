@@ -44,7 +44,7 @@ if [[ "$install_add_pr" =~ ^[yY]$ ]]; then
     echo "--- Installing additional programs ---"
     sudo pacman -S --noconfirm doublecmd
 
-    flatpak install -y flathub \
+    flatpak install --system -y flathub \
         com.opera.Opera \
         md.obsidian.Obsidian \
         com.protonvpn.www \
@@ -72,19 +72,19 @@ fi
 
 if [[ "$install_pycharm" =~ ^[yY]$ ]]; then
     echo "--- Installing PyCharm Community ---"
-    flatpak install -y flathub com.jetbrains.PyCharm-Community
+    flatpak install --system -y flathub com.jetbrains.PyCharm-Community
     echo "alias pycharm='nohup flatpak run com.jetbrains.PyCharm-Community &'" >> ~/.zshrc
 fi
 
 if [[ "$install_unityhub" =~ ^[yY]$ ]]; then
     echo "--- Installing UnityHub ---"
-    flatpak install -y flathub com.unity.UnityHub
+    flatpak install --system -y flathub com.unity.UnityHub
     echo "alias unity='nohup flatpak run com.unity.UnityHub &'" >> ~/.zshrc
 fi
 
 if [[ "$install_arduino_IDE" =~ ^[yY]$ ]]; then
     echo "--- Installing Arduino IDE ---"
-    flatpak install -y flathub cc.arduino.IDE2
+    flatpak install --system -y flathub cc.arduino.IDE2
     echo "alias arduino='nohup flatpak run cc.arduino.IDE2 &'" >> ~/.zshrc
 fi
 
