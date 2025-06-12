@@ -12,23 +12,29 @@ ask_yes_no() {
     done
 }
 
-setup_git=$(ask_yes_no "Настроить Git?")
-setup_ssh=$(ask_yes_no "Создать SSH ключ?")
-setup_gpg=$(ask_yes_no "Создать GPG ключ?")
+LOGFILE="$HOME/setup_user-$(date +%Y%m%d-%H%M%S).log"
+exec > >(tee -a "$LOGFILE") 2>&1
+
+setup_git=$(ask_yes_no "Set up Git?")
+setup_ssh=$(ask_yes_no "Create SSH key?")
+setup_gpg=$(ask_yes_no "Create GPG key?")
 
 # --- Git setup ---
 if [[ "$setup_git" =~ ^[yY]$ ]]; then
     echo "--- Git setup ---"
-    if [ "$(git config --global --get user.name)" != "Gusko Maksim" ]; then
+    read -p "Enter Git user name: " git_name
+    read -p "Enter Git email: " git_email
+
+    if [ "$(git config --global --get user.name)" != "$git_name" ]; then
         echo "Setting Git user name..."
-        git config --global user.name "Gusko Maksim"
+        git config --global user.name "$git_name"
     else
         echo "Git user name is already set."
     fi
 
-    if [ "$(git config --global --get user.email)" != "gusko.maksim.n@gmail.com" ]; then
+    if [ "$(git config --global --get user.email)" != "$git_email" ]; then
         echo "Setting Git email..."
-        git config --global user.email "gusko.maksim.n@gmail.com"
+        git config --global user.email "$git_email"
     else
         echo "Git user email is already set."
     fi
